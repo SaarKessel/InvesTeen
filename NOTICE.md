@@ -34,3 +34,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## NumberFlow (@number-flow/react)
+- https://number-flow.barvian.me / npm @number-flow/react
+- MIT License, Copyright (c) 2024-2026 Max Barvian. Used for animated numbers (prices, scores, levels).
+
+## React Bits (StarBorder component, vendored)
+- https://reactbits.dev / github.com/DavidHDev/react-bits
+- MIT + Commons Clause License Condition v1.0, Copyright (c) 2026 David Haz.
+- Commons Clause restricts selling the software; InvesTeen is free and educational. Used for level/achievement borders on the progress page.
+
+## Heebo font (@fontsource/heebo)
+- SIL Open Font License 1.1 (OFL-1.1), Copyright 2014 The Heebo Project Authors.
+- Self-hosted via Fontsource; covers Hebrew + Latin.
