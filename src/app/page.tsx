@@ -31,7 +31,7 @@ export default function Landing() {
         <LandingHero />
 
         {/* How it works */}
-        <section className="py-10">
+        <section className="py-6 sm:py-10">
           <Reveal><h2 className="section-title text-center text-2xl">איך זה עובד?</h2></Reveal>
           <div className="grid sm:grid-cols-3 gap-4 mt-8">
             {STEPS.map((s, i) => (

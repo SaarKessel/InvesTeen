@@ -23,7 +23,7 @@ export default function LandingHero() {
         cta: "מתחילים ללמוד"
       };
   return (
-    <section className="pt-20 pb-14 text-center">
+    <section className="pt-16 pb-6 sm:pb-10 text-center">
       <Reveal>
         <span className="inline-block text-xs px-3 py-1.5 rounded-full border border-accent-600/50 bg-accent-600/10 text-accent-400 font-medium">
           פלטפורמה חינוכית · 100% כסף וירטואלי · בלי ייעוץ השקעות
