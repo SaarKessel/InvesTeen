@@ -13,6 +13,7 @@ import { Card, Badge, DataSourceNote, EmptyState, Pnl } from "@/components/ui";
 import { Term } from "@/components/easyui/Tooltip";
 import { Sparkline } from "@/components/Sparkline";
 import PortfolioChart from "@/components/PortfolioChart";
+import NextStepCard from "@/components/NextStepCard";
 import { formatVT } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
@@ -103,13 +104,7 @@ export default function DashboardPage() {
       <Card className="mt-4">
         <h2 className="section-title mb-2">הצעד הבא שלך</h2>
         {nextLesson ? (
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div>
-              <div className="font-medium">{nextLesson.titleHe}</div>
-              <div className="text-sm muted">{nextLesson.descriptionHe}</div>
-            </div>
-            <Link className="btn-primary" href={`/learn/${nextLesson.id}`}>להמשיך ללמוד</Link>
-          </div>
+          <NextStepCard lessonId={nextLesson.id} titleHe={nextLesson.titleHe} descriptionHe={nextLesson.descriptionHe} />
         ) : (
           <EmptyState title="סיימת את כל השיעורים!" body="אפשר להמשיך למשימות באתגרים או לתרגל בתיק הווירטואלי." actionHref="/challenges" actionLabel="למשימות" />
         )}

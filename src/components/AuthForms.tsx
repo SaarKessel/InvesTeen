@@ -2,15 +2,16 @@
 import { useFormState, useFormStatus } from "react-dom";
 import { registerAction, loginAction } from "@/app/actions/auth";
 import { Loader } from "@/components/easyui/Loader";
+import { PressButton } from "@/components/easyui/PressButton";
 import { AGE_BANDS } from "@/lib/constants";
 
 function Submit({ label }: { label: string }) {
   const { pending } = useFormStatus();
   return (
-    <button className="btn-primary w-full flex items-center justify-center gap-2" disabled={pending}>
+    <PressButton variant="primary" fullWidth type="submit" disabled={pending}>
       {pending && <Loader size={16} color="#fff" label="" />}
       {pending ? "רגע..." : label}
-    </button>
+    </PressButton>
   );
 }
 

@@ -2,6 +2,8 @@
 import { useState, useTransition } from "react";
 import { completeMissionAction } from "@/app/actions/learn";
 import { AnimatedNumber } from "@/components/easyui/AnimatedNumber";
+import { DrawCheckbox } from "@/components/easyui/DrawCheckbox";
+import { PressButton } from "@/components/easyui/PressButton";
 
 /**
  * Interactive mission runner. Educational, deterministic math with documented assumptions.
@@ -40,10 +42,22 @@ function Field({ label, value, onChange, min, max, step = 1 }: { label: string; 
   );
 }
 
+function UnderstandGate({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <DrawCheckbox
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      label="קראתי את ההנחות ואני מבין/ה שזה תרגיל לימודי"
+      description="המשימה תסומן כהושלמה רק אחרי הסימון - ההבנה חשובה יותר מהתוצאה."
+    />
+  );
+}
+
 function InflationMission({ onResult, onFinish, pending }: { onResult: (s: string) => void; onFinish: (s: string) => void; pending: boolean }) {
   const [amount, setAmount] = useState(1000);
   const [years, setYears] = useState(10);
   const [infl, setInfl] = useState(3);
+  const [understood, setUnderstood] = useState(false);
   const power = amount / Math.pow(1 + infl / 100, years);
   return (
     <div className="space-y-4 mt-4">
@@ -55,10 +69,11 @@ function InflationMission({ onResult, onFinish, pending }: { onResult: (s: strin
         כוח הקנייה של {amount.toLocaleString("he-IL")} ש"ח בעוד {years} שנים:{" "}
         <b dir="ltr"><AnimatedNumber value={Math.round(power)} /> ש"ח</b> במחירי היום.
       </div>
-      <button className="btn-primary" disabled={pending}
+      <UnderstandGate checked={understood} onChange={setUnderstood} />
+      <PressButton variant="primary" disabled={pending || !understood}
         onClick={() => { const s = `חושב כוח קנייה: ${amount} ש"ח, ${years} שנים, ${infl}% אינפלציה = ${power.toFixed(0)} ש"ח במחירי היום.`; onResult(s); onFinish(s); }}>
         הבנתי - סיום משימה
-      </button>
+      </PressButton>
     </div>
   );
 }
@@ -66,6 +81,7 @@ function InflationMission({ onResult, onFinish, pending }: { onResult: (s: strin
 function FeesMission({ onResult, onFinish, pending }: { onResult: (s: string) => void; onFinish: (s: string) => void; pending: boolean }) {
   const [years, setYears] = useState(20);
   const [fee, setFee] = useState(2);
+  const [understood, setUnderstood] = useState(false);
   const start = 10000, ret = 7;
   const noFee = start * Math.pow(1 + ret / 100, years);
   const withFee = start * Math.pow(1 + (ret - fee) / 100, years);
@@ -80,10 +96,11 @@ function FeesMission({ onResult, onFinish, pending }: { onResult: (s: string) =>
         <div className="card p-4"><div className="text-sm muted">עם עמלה של {fee}%</div><div className="font-bold text-lg" dir="ltr"><AnimatedNumber value={Math.round(withFee)} /></div></div>
       </div>
       <div className="card p-4">ההבדל שהעמלה "אכלה": <b className="text-warn-500" dir="ltr">{diff.toLocaleString("he-IL", { maximumFractionDigits: 0 })} ש"ח</b></div>
-      <button className="btn-primary" disabled={pending}
+      <UnderstandGate checked={understood} onChange={setUnderstood} />
+      <PressButton variant="primary" disabled={pending || !understood}
         onClick={() => { const s = `הושוו עמלות: ${fee}% לאורך ${years} שנים עולים ${diff.toFixed(0)} ש"ח.`; onResult(s); onFinish(s); }}>
         הבנתי - סיום משימה
-      </button>
+      </PressButton>
     </div>
   );
 }
@@ -91,6 +108,7 @@ function FeesMission({ onResult, onFinish, pending }: { onResult: (s: string) =>
 function DiversificationMission({ onResult, onFinish, pending }: { onResult: (s: string) => void; onFinish: (s: string) => void; pending: boolean }) {
   const [concentrated, setConcentrated] = useState(100); // % in tech in the concentrated portfolio
   const [ran, setRan] = useState(false);
+  const [understood, setUnderstood] = useState(false);
   // Documented scenario: tech sector falls 30%, other sectors fall 5%. Diversified = 25% tech / 75% spread.
   const techShock = -30, otherShock = -5;
   const conc = (concentrated / 100) * techShock + (1 - concentrated / 100) * otherShock;
@@ -99,18 +117,19 @@ function DiversificationMission({ onResult, onFinish, pending }: { onResult: (s:
     <div className="space-y-4 mt-4">
       <p className="text-sm muted">תרחיש מוגדר מראש עם הנחות ידועות: ענף הטכנולוגיה יורד 30%, שאר הענפים יורדים 5%. זה תרחיש לימודי, לא תחזית.</p>
       <Field label="כמה אחוז מהתיק המרוכז בטכנולוגיה?" value={concentrated} onChange={setConcentrated} min={10} max={100} />
-      <button className="btn-secondary" onClick={() => setRan(true)}>הרצת התרחיש</button>
+      <PressButton variant="secondary" onClick={() => setRan(true)}>הרצת התרחיש</PressButton>
       {ran && (
         <div className="grid grid-cols-2 gap-3 text-center">
           <div className="card p-4"><div className="text-sm muted">תיק מרוכז ({concentrated}% טכנו)</div><div className="font-bold text-danger-500" dir="ltr">{conc.toFixed(1)}%</div></div>
           <div className="card p-4"><div className="text-sm muted">תיק מפוזר (25% טכנו)</div><div className="font-bold text-danger-500" dir="ltr">{div.toFixed(1)}%</div></div>
         </div>
       )}
+      {ran && <UnderstandGate checked={understood} onChange={setUnderstood} />}
       {ran && (
-        <button className="btn-primary" disabled={pending}
+        <PressButton variant="primary" disabled={pending || !understood}
           onClick={() => { const s = `תרחיש ירידה: תיק מרוכז (${concentrated}% טכנו) ירד ${conc.toFixed(1)}% מול תיק מפוזר שירד ${div.toFixed(1)}%.`; onResult(s); onFinish(s); }}>
           הבנתי את ההבדל - סיום משימה
-        </button>
+        </PressButton>
       )}
     </div>
   );

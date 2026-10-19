@@ -7,6 +7,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { useReducedMotion } from "framer-motion";
+import { AnimatedTabs } from "@/components/easyui/AnimatedTabs";
 import type { PortfolioPoint } from "@/lib/engine/portfolioHistory";
 
 const RANGES = [
@@ -77,14 +78,10 @@ export default function PortfolioChart({ data, labelHe = "שווי התיק הו
         )}
       </div>
 
-      <div className="flex gap-1 mt-3 border-t border-navy-800 pt-3" dir="ltr" role="tablist" aria-label="טווח זמן">
-        {RANGES.map((x) => (
-          <button key={x.id} role="tab" aria-selected={range === x.id}
-            onClick={() => { setRange(x.id); setScrubIdx(null); }}
-            className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-colors ${range === x.id ? "text-accent-500 bg-accent-600/10" : "text-slate-500 hover:text-slate-300"}`}>
-            {x.id}
-          </button>
-        ))}
+      <div className="mt-3 border-t border-navy-800 pt-3">
+        <AnimatedTabs dir="ltr" ariaLabel="טווח זמן" activeTab={range}
+          tabs={RANGES.map((x) => ({ id: x.id, label: x.id }))}
+          onChange={(id) => { setRange(id as RangeId); setScrubIdx(null); }} />
       </div>
     </div>
   );

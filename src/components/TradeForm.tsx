@@ -1,18 +1,23 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader } from "@/components/easyui/Loader";
 import { useFormState, useFormStatus } from "react-dom";
 import { tradeAction, undoTradeAction, type TradeState } from "@/app/actions/trade";
 import { useToast } from "@/components/easyui/Toasts";
+import { DragToConfirm } from "@/components/easyui/DragToConfirm";
 import { useRouter } from "next/navigation";
 
-function SubmitBtn({ side }: { side: "buy" | "sell" }) {
+function SubmitSlider({ side, formRef }: { side: "buy" | "sell"; formRef: React.RefObject<HTMLFormElement | null> }) {
   const { pending } = useFormStatus();
+  const label = side === "buy" ? "קנייה וירטואלית" : "מכירה וירטואלית";
   return (
-    <button className={`${side === "buy" ? "btn-primary" : "btn-secondary"} w-full flex items-center justify-center gap-2`} disabled={pending}>
-      {pending && <Loader size={16} color="#fff" label="" />}
-      {pending ? "מבצע..." : side === "buy" ? "קנייה וירטואלית" : "מכירה וירטואלית"}
-    </button>
+    <DragToConfirm
+      label={`${label} - החלקה לאישור`}
+      confirmedLabel="הפעולה נשלחה"
+      tone={side === "buy" ? "confirm" : "sell"}
+      pending={pending}
+      autoResetDelay={2000}
+      onConfirm={() => formRef.current?.requestSubmit()}
+    />
   );
 }
 
@@ -34,6 +39,7 @@ export default function TradeForm({ symbol, side }: { symbol: string; side: "buy
   const clientOrderId = useMemo(() => crypto.randomUUID(), []);
   const toast = useToast();
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement | null>(null);
   const lastToasted = useRef<string | undefined>(undefined);
 
   useEffect(() => {
@@ -50,7 +56,7 @@ export default function TradeForm({ symbol, side }: { symbol: string; side: "buy
   }, [state, side, toast, router]);
 
   return (
-    <form action={action} className="space-y-3">
+    <form action={action} ref={formRef} className="space-y-3">
       <input type="hidden" name="symbol" value={symbol} />
       <input type="hidden" name="side" value={side} />
       <input type="hidden" name="clientOrderId" value={clientOrderId} />
@@ -59,7 +65,7 @@ export default function TradeForm({ symbol, side }: { symbol: string; side: "buy
         <QtyStepper id={`qty-${side}`} />
       </div>
       {state.error ? <p className="text-danger-500 text-sm">{state.error}</p> : null}
-      <SubmitBtn side={side} />
+      <SubmitSlider side={side} formRef={formRef} />
     </form>
   );
 }

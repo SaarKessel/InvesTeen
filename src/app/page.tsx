@@ -4,6 +4,7 @@ import { SpotlightCard } from "@/components/easyui/SpotlightCard";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { Reveal } from "@/components/Reveal";
 import { currentUser } from "@/lib/auth";
+import LandingHero from "@/components/LandingHero";
 import { redirect } from "next/navigation";
 
 const FEATURES: { title: string; body: string; icon: string }[] = [
@@ -27,32 +28,7 @@ export default function Landing() {
     <main className="relative min-h-screen overflow-hidden">
       <HeroBackdrop />
       <div className="relative z-10 mx-auto max-w-4xl px-6 pb-16">
-        {/* Hero */}
-        <section className="pt-20 pb-14 text-center">
-          <Reveal>
-            <span className="inline-block text-xs px-3 py-1.5 rounded-full border border-accent-600/50 bg-accent-600/10 text-accent-400 font-medium">
-              פלטפורמה חינוכית · 100% כסף וירטואלי · בלי ייעוץ השקעות
-            </span>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <h1 className="display text-5xl sm:text-6xl mt-6">InvesTeen<span className="text-accent-500">.</span></h1>
-          </Reveal>
-          <Reveal delay={0.14}>
-            <p className="mt-3 text-xl text-slate-200 font-medium">לומדים כסף. מתרגלים השקעות. בונים עתיד.</p>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="mt-4 max-w-xl mx-auto muted leading-7">
-              פלטפורמה חינוכית לבני נוער: תיק השקעות וירטואלי בכסף לימודי, שיעורים קצרים, משימות ומנטור AI חינוכי.
-              בלי כסף אמיתי, בלי סיכון, בלי לחץ.
-            </p>
-          </Reveal>
-          <Reveal delay={0.26}>
-            <div className="flex gap-3 mt-8 justify-center">
-              <Link href="/register" className="btn-primary text-base px-6 py-3">מתחילים ללמוד</Link>
-              <Link href="/login" className="btn-secondary text-base px-6 py-3">יש לי חשבון</Link>
-            </div>
-          </Reveal>
-        </section>
+        <LandingHero />
 
         {/* How it works */}
         <section className="py-10">

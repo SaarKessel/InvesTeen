@@ -54,7 +54,7 @@ try {
   await page.waitForSelector("text=אופק טכנולוגיות");
   await page.goto(base + "/markets/OFK");
   await page.locator("button[aria-label='עוד']").first().click(); // qty -> 2
-  await page.click("button:has-text('קנייה וירטואלית')");
+  await page.locator("[role=slider][aria-label*='קנייה']").press("Enter"); // keyboard path of DragToConfirm
   await page.waitForSelector("text=בוצעה", { timeout: 15000 }); // undo toast
   check("virtual buy fills and shows the undo toast", true);
 
