@@ -38,7 +38,26 @@ No external API keys are required for the MVP. There are no third-party secrets 
 
 ## Deploying (owner action)
 
-The project is a standard Next.js 14 app. On Vercel: import the repo, no env vars needed for the MVP. Note: Vercel's filesystem is ephemeral, so the SQLite file resets on redeploy - for a persistent deployment use a single VM/container with a mounted volume for `data/`, or swap the DB layer for a hosted database before real users.
+Verified against Vercel and Node docs, 2026-10-19:
+
+### Route A - disposable phone demo on Vercel (verified locally, 8/8 e2e + cold-start seed test)
+
+Vercel's function filesystem is read-only with a writable /tmp (up to 500 MB), and instances do not share it (Vercel KB: SQLite cannot provide permanent storage on Vercel). That is fine for a demo if the app reseeds on cold start - which this repo now does:
+
+- Set env vars in the Vercel project: `INVESTEEN_DB=/tmp/investeen.db` and `INVESTEEN_DEMO_SEED=1`.
+- `src/instrumentation.ts` + `src/lib/demoSeed.ts` create the demo account (yael_learns) and chart-moving history automatically whenever a fresh instance boots with an empty DB. Registration and login work for the life of a warm instance.
+- Node: `engines >=22.13.0` (node:sqlite works without flags from 22.13; Vercel offers 22.x and 24.x, both qualify; only the major is pinned).
+- Expected behavior: users/sessions/orders vanish on cold starts, redeploys and across concurrent instances. Say so on the demo link.
+
+Owner setup for Route A: empty GitHub repo + push (PAT via vault), a free Vercel account, import the repo, set the two env vars above. No spending, no DB migration, no code changes.
+
+### Route B - durable accounts (later)
+
+SQLite is single-writer, so durability needs ONE of:
+1. A single VM/container (any small VPS, Fly.io machine, Railway/Render service) running `pnpm start` with a mounted volume for `data/` - no code changes; or
+2. Swapping the DB layer to a hosted Postgres - a real code change; do it only before real users.
+
+Owner setup for Route B (option 1): a hosting account, one always-on instance, a persistent volume mounted at the app `data/` dir, `pnpm install && pnpm build && pnpm start` behind HTTPS. Keep `INVESTEEN_DEMO_SEED` unset.
 
 Git remote, hosting account, and the deploy itself stay with the owner (per project rules).
 
