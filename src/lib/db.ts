@@ -165,7 +165,7 @@ let db: DatabaseSync | null = null;
 
 export function getDb(dbPath?: string): DatabaseSync {
   if (db) return db;
-  const p = dbPath ?? path.join(process.cwd(), "data", "investeen.db");
+  const p = dbPath ?? process.env.INVESTEEN_DB ?? path.join(process.cwd(), "data", "investeen.db");
   if (p !== ":memory:") fs.mkdirSync(path.dirname(p), { recursive: true });
   db = new DatabaseSync(p);
   db.exec("PRAGMA journal_mode = WAL");
