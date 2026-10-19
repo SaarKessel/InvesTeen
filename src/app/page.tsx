@@ -5,6 +5,7 @@ import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { Reveal } from "@/components/Reveal";
 import { currentUser } from "@/lib/auth";
 import LandingHero from "@/components/LandingHero";
+import FeatureTilt from "@/components/FeatureTilt";
 import { redirect } from "next/navigation";
 
 const FEATURES: { title: string; body: string; icon: string }[] = [
@@ -52,13 +53,13 @@ export default function Landing() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
             {FEATURES.map((f, i) => (
               <Reveal key={f.title} delay={(i % 3) * 0.06}>
-                <SpotlightCard className="p-5 h-full">
+                <FeatureTilt><SpotlightCard className="p-5 h-full">
                   <div className="w-10 h-10 rounded-xl bg-navy-800 border border-navy-600 flex items-center justify-center text-accent-500" aria-hidden>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={f.icon} /></svg>
                   </div>
                   <div className="font-semibold mt-3">{f.title}</div>
                   <p className="text-sm muted mt-1.5 leading-6">{f.body}</p>
-                </SpotlightCard>
+                </SpotlightCard></FeatureTilt>
               </Reveal>
             ))}
           </div>

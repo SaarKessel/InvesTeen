@@ -1,5 +1,10 @@
 # Notices
 
+## Motion Primitives (vendored ports in `src/components/motionprimitives/`)
+- **Project**: Motion Primitives - https://github.com/ibelick/motion-primitives (motion-primitives.com)
+- **License**: MIT, Copyright (c) 2024-2026 Ibelick. Verified via GitHub API on 2026-10-19. Sale-compatible.
+- **Files**: `src/components/motionprimitives/text-effect.tsx`, `border-trail.tsx`, `tilt.tsx`. Runtime imports rewritten from `motion/react` to `framer-motion`; reduced-motion fallbacks added (static render / instant reveal). Original attribution kept in file headers.
+
 ## EasyUI
 
 Selected UI components in `src/components/easyui/` are adapted from EasyUI:

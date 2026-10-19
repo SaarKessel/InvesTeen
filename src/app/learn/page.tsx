@@ -6,6 +6,7 @@ import { LESSONS } from "@/lib/content/lessons";
 import AppShell from "@/components/AppShell";
 import { Card, Badge } from "@/components/ui";
 import { AnimatedBar } from "@/components/easyui/AnimatedBar";
+import LearningTimeline, { TimelineLesson } from "@/components/LearningTimeline";
 
 export const dynamic = "force-dynamic";
 
@@ -21,9 +22,19 @@ export default function LearnPage() {
     { id: "D", title: "בונים תיק" },
     { id: "E", title: "פסיכולוגיה של משקיעים" }
   ];
+  const timeline: TimelineLesson[] = LESSONS.map((l) => ({
+    id: l.id,
+    titleHe: l.titleHe,
+    status: progress[l.id]?.status === "completed" ? "completed" : l.id === nextId ? "current" : "pending",
+    scorePct: progress[l.id]?.scorePct ?? null,
+  }));
   return (
     <AppShell user={user}>
       <h1 className="display text-2xl">לומדים</h1>
+      <Card className="mt-4 !p-4">
+        <h2 className="section-title">המסלול שלי</h2>
+        <LearningTimeline lessons={timeline} />
+      </Card>
       {modules.map((m) => {
         const moduleLessons = LESSONS.filter((l) => l.moduleId === m.id);
         const doneCount = moduleLessons.filter((l) => progress[l.id]?.status === "completed").length;

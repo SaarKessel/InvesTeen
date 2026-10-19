@@ -14,6 +14,7 @@ import { Term } from "@/components/easyui/Tooltip";
 import { Sparkline } from "@/components/Sparkline";
 import PortfolioChart from "@/components/PortfolioChart";
 import NextStepCard from "@/components/NextStepCard";
+import RecentActivity, { ActivityRow } from "@/components/RecentActivity";
 import { formatVT } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +29,24 @@ export default function DashboardPage() {
   const level = userLevel(db, user.id);
   const progress = lessonProgress(db, user.id);
   const nextLesson = LESSONS.find((l) => progress[l.id]?.status !== "completed");
+
+  const recentOrders = db
+    .prepare(
+      `SELECT o.id, o.side, o.symbol, o.qty, o.price_minor, o.price_day, a.name_he AS name_he
+       FROM simulated_orders o JOIN assets a ON a.symbol = o.symbol
+       WHERE o.account_id = ? AND o.status = 'filled'
+       ORDER BY o.created_at DESC LIMIT 5`
+    )
+    .all(acct.id) as Array<{ id: string; side: "buy" | "sell"; symbol: string; qty: number; price_minor: number; price_day: number; name_he: string }>;
+  const activityRows: ActivityRow[] = recentOrders.map((o) => ({
+    id: o.id,
+    side: o.side,
+    symbol: o.symbol,
+    nameHe: o.name_he,
+    qty: o.qty,
+    totalText: formatVT(o.qty * o.price_minor),
+    dayLabel: `יום סימולציה ${o.price_day}`,
+  }));
 
   const insights: string[] = [];
   if (p.concentrationTopPct !== null && p.concentrationTopPct > 60)
@@ -91,6 +110,16 @@ export default function DashboardPage() {
           <Pnl minor={p.realizedPnlMinor} />
         </div>
       </section>
+
+      {activityRows.length > 0 && (
+        <Card className="mt-6 !p-4">
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="section-title">פעילות אחרונה</h2>
+            <Link href="/portfolio" className="text-xs text-accent-500 hover:underline">להיסטוריית פעולות</Link>
+          </div>
+          <RecentActivity rows={activityRows} />
+        </Card>
+      )}
 
       {insights.length > 0 && (
         <Card className="mt-6">

@@ -25,7 +25,16 @@ const check = (name, cond) => {
   if (!cond) failures++;
 };
 
-await wait(4500);
+// Wait for the spawned server to accept requests (cold starts vary by machine).
+{
+  const deadline = Date.now() + 45000;
+  let up = false;
+  while (Date.now() < deadline) {
+    try { const r = await fetch(base + "/login"); if (r.ok) { up = true; break; } } catch {}
+    await wait(1000);
+  }
+  if (!up) { console.error("E2E: server did not start in time"); process.exit(1); }
+}
 const browser = await chromium.launch({ executablePath: "/usr/bin/google-chrome", args: ["--no-sandbox"] });
 try {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
