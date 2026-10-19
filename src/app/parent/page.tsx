@@ -5,6 +5,7 @@ import { approveGuardianAction, revokeGuardianAction } from "@/app/actions/guard
 import { RequestGuardianForm } from "@/components/GuardianForms";
 import AppShell from "@/components/AppShell";
 import { Card, Badge } from "@/components/ui";
+import { Stepper } from "@/components/easyui/Stepper";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,9 @@ export default function ParentPage() {
       <p className="muted mt-1 text-sm">קשר הורה-ילד נוצר רק באישור שני הצדדים. ההורה רואה התקדמות בלמידה בלבד - לעולם לא שיחות עם המנטור.</p>
 
       <Card className="mt-5">
-        <h2 className="font-semibold">קישור הורה לחשבון שלי</h2>
+        <h2 className="section-title mb-3">קישור הורה לחשבון שלי</h2>
+        <Stepper className="mb-4" steps={["שליחת בקשה", "אישור ההורה", "קישור פעיל"]}
+          current={!outgoing ? 0 : outgoing.status === "pending" ? 1 : 2} />
         {outgoing ? (
           <p className="text-sm mt-2 text-slate-300">
             בקשה ל-{outgoing.guardianUsername}: {outgoing.status === "pending" ? <Badge tone="warn">ממתינה לאישור ההורה</Badge> : <Badge tone="good">פעיל</Badge>}
@@ -36,7 +39,7 @@ export default function ParentPage() {
 
       {pending.length > 0 && (
         <Card className="mt-4">
-          <h2 className="font-semibold mb-2">בקשות שממתינות לאישורך כהורה</h2>
+          <h2 className="section-title mb-2">בקשות שממתינות לאישורך כהורה</h2>
           {pending.map((r) => (
             <form key={r.teenId} action={approveGuardianAction} className="flex items-center justify-between gap-2 border-t border-navy-800 pt-2 mt-2">
               <span className="text-sm">{r.teenUsername} מבקש/ת לקשר אותך כהורה</span>
@@ -49,7 +52,7 @@ export default function ParentPage() {
 
       {linked.length > 0 && (
         <Card className="mt-4">
-          <h2 className="font-semibold mb-2">התקדמות בלמידה</h2>
+          <h2 className="section-title mb-2">התקדמות בלמידה</h2>
           <div className="space-y-3">
             {linked.map((t) => (
               <div key={t.teenId} className="bg-navy-800 rounded-xl p-3">

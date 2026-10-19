@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { completeMissionAction } from "@/app/actions/learn";
+import { AnimatedNumber } from "@/components/easyui/AnimatedNumber";
 
 /**
  * Interactive mission runner. Educational, deterministic math with documented assumptions.
@@ -52,7 +53,7 @@ function InflationMission({ onResult, onFinish, pending }: { onResult: (s: strin
       <Field label="אינפלציה שנתית (%)" value={infl} onChange={setInfl} min={0} max={10} />
       <div className="card p-4">
         כוח הקנייה של {amount.toLocaleString("he-IL")} ש"ח בעוד {years} שנים:{" "}
-        <b dir="ltr">{power.toLocaleString("he-IL", { maximumFractionDigits: 0 })} ש"ח</b> במחירי היום.
+        <b dir="ltr"><AnimatedNumber value={Math.round(power)} /> ש"ח</b> במחירי היום.
       </div>
       <button className="btn-primary" disabled={pending}
         onClick={() => { const s = `חושב כוח קנייה: ${amount} ש"ח, ${years} שנים, ${infl}% אינפלציה = ${power.toFixed(0)} ש"ח במחירי היום.`; onResult(s); onFinish(s); }}>
@@ -75,8 +76,8 @@ function FeesMission({ onResult, onFinish, pending }: { onResult: (s: string) =>
       <Field label="שנים" value={years} onChange={setYears} min={1} max={40} />
       <Field label="עמלה שנתית (%)" value={fee} onChange={setFee} min={0} max={3} step={0.5} />
       <div className="grid grid-cols-2 gap-3 text-center">
-        <div className="card p-4"><div className="text-sm muted">בלי עמלה</div><div className="font-bold" dir="ltr">{noFee.toLocaleString("he-IL", { maximumFractionDigits: 0 })}</div></div>
-        <div className="card p-4"><div className="text-sm muted">עם עמלה של {fee}%</div><div className="font-bold" dir="ltr">{withFee.toLocaleString("he-IL", { maximumFractionDigits: 0 })}</div></div>
+        <div className="card p-4"><div className="text-sm muted">בלי עמלה</div><div className="font-bold text-lg" dir="ltr"><AnimatedNumber value={Math.round(noFee)} /></div></div>
+        <div className="card p-4"><div className="text-sm muted">עם עמלה של {fee}%</div><div className="font-bold text-lg" dir="ltr"><AnimatedNumber value={Math.round(withFee)} /></div></div>
       </div>
       <div className="card p-4">ההבדל שהעמלה "אכלה": <b className="text-warn-500" dir="ltr">{diff.toLocaleString("he-IL", { maximumFractionDigits: 0 })} ש"ח</b></div>
       <button className="btn-primary" disabled={pending}

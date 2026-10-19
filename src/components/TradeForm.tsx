@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Loader } from "@/components/easyui/Loader";
 import { useFormState, useFormStatus } from "react-dom";
 import { tradeAction, undoTradeAction, type TradeState } from "@/app/actions/trade";
 import { useToast } from "@/components/easyui/Toasts";
@@ -8,9 +9,23 @@ import { useRouter } from "next/navigation";
 function SubmitBtn({ side }: { side: "buy" | "sell" }) {
   const { pending } = useFormStatus();
   return (
-    <button className={side === "buy" ? "btn-primary" : "btn-secondary"} disabled={pending}>
+    <button className={`${side === "buy" ? "btn-primary" : "btn-secondary"} w-full flex items-center justify-center gap-2`} disabled={pending}>
+      {pending && <Loader size={16} color="#fff" label="" />}
       {pending ? "מבצע..." : side === "buy" ? "קנייה וירטואלית" : "מכירה וירטואלית"}
     </button>
+  );
+}
+
+function QtyStepper({ id }: { id: string }) {
+  const [qty, setQty] = useState(1);
+  const btn = "w-11 h-11 rounded-xl bg-navy-800 border border-navy-600 text-lg font-bold text-slate-200 hover:border-accent-500 transition-colors disabled:opacity-40";
+  return (
+    <div className="flex items-center gap-3" dir="ltr">
+      <button type="button" className={btn} onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={qty <= 1} aria-label="פחות">-</button>
+      <input className="input text-center font-bold text-lg" id={id} name="qty" type="number" min={1} step={1} required inputMode="numeric"
+        value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} />
+      <button type="button" className={btn} onClick={() => setQty((q) => q + 1)} aria-label="עוד">+</button>
+    </div>
   );
 }
 
@@ -41,7 +56,7 @@ export default function TradeForm({ symbol, side }: { symbol: string; side: "buy
       <input type="hidden" name="clientOrderId" value={clientOrderId} />
       <div>
         <label className="label" htmlFor={`qty-${side}`}>כמות יחידות</label>
-        <input className="input" id={`qty-${side}`} name="qty" type="number" min={1} step={1} required inputMode="numeric" />
+        <QtyStepper id={`qty-${side}`} />
       </div>
       {state.error ? <p className="text-danger-500 text-sm">{state.error}</p> : null}
       <SubmitBtn side={side} />

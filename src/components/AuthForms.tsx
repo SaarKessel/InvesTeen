@@ -1,11 +1,17 @@
 "use client";
 import { useFormState, useFormStatus } from "react-dom";
 import { registerAction, loginAction } from "@/app/actions/auth";
+import { Loader } from "@/components/easyui/Loader";
 import { AGE_BANDS } from "@/lib/constants";
 
 function Submit({ label }: { label: string }) {
   const { pending } = useFormStatus();
-  return <button className="btn-primary w-full" disabled={pending}>{pending ? "רגע..." : label}</button>;
+  return (
+    <button className="btn-primary w-full flex items-center justify-center gap-2" disabled={pending}>
+      {pending && <Loader size={16} color="#fff" label="" />}
+      {pending ? "רגע..." : label}
+    </button>
+  );
 }
 
 export function RegisterForm() {

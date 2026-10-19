@@ -13,6 +13,7 @@ export default function LearnPage() {
   const user = requireUser();
   const db = getDb();
   const progress = lessonProgress(db, user.id);
+  const nextId = LESSONS.find((l) => progress[l.id]?.status !== "completed")?.id;
   const modules = [
     { id: "A", title: "יסודות הכסף" },
     { id: "B", title: "יסודות ההשקעה" },
@@ -42,12 +43,19 @@ export default function LearnPage() {
               const st = progress[l.id];
               return (
                 <Link key={l.id} href={`/learn/${l.id}`}>
-                  <Card className="h-full hover:border-accent-600/50 transition-colors">
+                  <Card className={`h-full hover:border-accent-600/60 transition-colors ${l.id === nextId ? "border-accent-600/50" : ""}`}>
                     <div className="flex justify-between items-start gap-2">
-                      <div className="font-medium">{l.titleHe}</div>
+                      <div className="font-medium flex items-center gap-2">
+                        {st?.status === "completed" && (
+                          <span className="w-5 h-5 rounded-full bg-accent-600 text-white flex items-center justify-center shrink-0" aria-label="הושלם">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12.5l5 5L20 6.5" /></svg>
+                          </span>
+                        )}
+                        {l.titleHe}
+                      </div>
                       {st?.status === "completed"
                         ? <Badge tone="good">הושלם {st.scorePct !== null ? `(${st.scorePct}%)` : ""}</Badge>
-                        : <Badge>רמה {l.difficulty}</Badge>}
+                        : l.id === nextId ? <Badge tone="good">הבא בתור</Badge> : <Badge>רמה {l.difficulty}</Badge>}
                     </div>
                     <p className="text-sm muted mt-1">{l.descriptionHe}</p>
                   </Card>

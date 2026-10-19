@@ -4,6 +4,7 @@ import { getDb, now } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { completeLesson, completeMission } from "@/lib/learning";
 import { MISSIONS } from "@/lib/content/missions";
+import { LESSONS } from "@/lib/content/lessons";
 
 const LessonSchema = z.object({
   lessonId: z.string().min(1).max(64),
@@ -14,10 +15,11 @@ export type LessonResult = { ok?: boolean; error?: string; scorePct?: number; co
 
 export async function completeLessonAction(_prev: LessonResult, formData: FormData): Promise<LessonResult> {
   const user = requireUser();
-  const parsed = LessonSchema.safeParse({
-    lessonId: formData.get("lessonId"),
-    answers: formData.getAll("answer")
-  });
+  const lessonId = String(formData.get("lessonId") ?? "");
+  const lesson = LESSONS.find((l) => l.id === lessonId);
+  // Each question is its own radio group (q0..qN); a shared name would allow only one selection total.
+  const answers = lesson ? lesson.checks.map((_, i) => formData.get(`q${i}`)).map((v) => (v === null ? NaN : v)) : [];
+  const parsed = LessonSchema.safeParse({ lessonId, answers });
   if (!parsed.success) return { error: "יש לענות על כל השאלות." };
   const db = getDb();
   const r = completeLesson(db, user.id, parsed.data.lessonId, parsed.data.answers);
