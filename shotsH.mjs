@@ -1,0 +1,18 @@
+import { chromium } from 'playwright';
+import fs from 'fs';
+const token = fs.readFileSync('/tmp/demo-token','utf8').trim();
+const base = 'http://localhost:3100';
+const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args:['--no-sandbox'] });
+const mk = async (w,h) => { const c = await b.newContext({ viewport:{width:w,height:h} });
+  await c.addCookies([{ name:'it_session', value:token, url:base }]); return c; };
+const d = await mk(1280,800); const pd = await d.newPage();
+await pd.goto(base+'/markets/OFK'); await pd.waitForTimeout(1600);
+await pd.screenshot({ path:'/tmp/shots/v6-desktop-asset.png' });
+await pd.goto(base+'/portfolio'); await pd.waitForTimeout(1400);
+await pd.screenshot({ path:'/tmp/shots/v6-desktop-portfolio.png' });
+const m = await mk(390,844); const pm = await m.newPage();
+await pm.goto(base+'/markets/OFK'); await pm.waitForTimeout(1600);
+await pm.screenshot({ path:'/tmp/shots/v6-mobile-asset.png' });
+await pm.goto(base+'/portfolio'); await pm.waitForTimeout(1400);
+await pm.screenshot({ path:'/tmp/shots/v6-mobile-portfolio.png' });
+await b.close(); console.log('done');

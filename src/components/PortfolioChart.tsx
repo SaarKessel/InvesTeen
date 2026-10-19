@@ -19,7 +19,7 @@ export function fmtVT(n: number): string {
   return `${n.toLocaleString("he-IL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} VT`;
 }
 
-export default function PortfolioChart({ data }: { data: PortfolioPoint[] }) {
+export default function PortfolioChart({ data, labelHe = "שווי התיק הווירטואלי" }: { data: PortfolioPoint[]; labelHe?: string }) {
   const reduced = useReducedMotion() ?? false;
   const [range, setRange] = useState<RangeId>("1M");
   const [scrubIdx, setScrubIdx] = useState<number | null>(null);
@@ -51,7 +51,7 @@ export default function PortfolioChart({ data }: { data: PortfolioPoint[] }) {
   return (
     <div>
       <div className="px-1">
-        <div className="text-sm muted">שווי התיק הווירטואלי</div>
+        <div className="text-sm muted">{labelHe}</div>
         <div className="display text-4xl sm:text-5xl mt-1 tabular-nums" dir="ltr">{fmtVT(shown.valueMinor / 100)}</div>
         <div className={`mt-1 text-sm font-semibold ${up ? "text-accent-500" : "text-danger-500"}`} dir="ltr">
           {up ? "+" : "-"}{fmtVT(Math.abs(delta) / 100)} ({up ? "+" : ""}{deltaPct.toFixed(2)}%)

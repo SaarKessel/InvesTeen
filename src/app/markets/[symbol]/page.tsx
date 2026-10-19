@@ -6,7 +6,7 @@ import { getAccountByUser } from "@/lib/engine/accounts";
 import AppShell from "@/components/AppShell";
 import { Card, Badge, DataSourceNote } from "@/components/ui";
 import { Term } from "@/components/easyui/Tooltip";
-import PriceChart from "@/components/PriceChart";
+import PortfolioChart from "@/components/PortfolioChart";
 import TradeForm from "@/components/TradeForm";
 import { formatVT } from "@/lib/money";
 
@@ -20,7 +20,7 @@ export default function AssetPage({ params }: { params: { symbol: string } }) {
   if (!asset) notFound();
   const quote = market.getQuote(asset.symbol);
   const raw = market.getHistory(asset.symbol);
-  const history = raw.map((p) => ({ day: p.day, price: p.priceMinor / 100 }));
+  const history = raw.map((p) => ({ day: p.day, valueMinor: p.priceMinor }));
   const last = raw[raw.length - 1]?.priceMinor ?? null;
   const prev = raw[raw.length - 2]?.priceMinor ?? null;
   const dayChangePct = last !== null && prev ? ((last - prev) / prev) * 100 : null;
@@ -37,23 +37,10 @@ export default function AssetPage({ params }: { params: { symbol: string } }) {
         <Badge>{asset.sector}</Badge>
       </div>
 
-      <Card className="mt-4">
-        <div className="flex justify-between items-baseline flex-wrap gap-2">
-          <div className="display text-3xl" dir="ltr">{quote ? formatVT(quote.priceMinor) : "מחיר לא זמין"}</div>
-          <div className="flex items-center gap-2">
-            {dayChangePct !== null && (
-              <span className={`text-sm font-semibold px-2 py-0.5 rounded-full ${dayChangePct >= 0 ? "bg-accent-600/15 text-accent-500" : "bg-danger-500/15 text-danger-500"}`} dir="ltr">
-                {dayChangePct >= 0 ? "+" : ""}{dayChangePct.toFixed(2)}%
-              </span>
-            )}
-            <span className="text-xs muted">{quote ? `${quote.asOf} · ${market.sourceLabel}` : "נתוני סימולציה חסרים"}</span>
-          </div>
-        </div>
-        <div className="text-xs muted mt-1">
-          <Term explain="אחוז השינוי במחיר בין שני ימי הסימולציה האחרונים. תנועה יומית קטנה היא נורמלית - לכן חושבים לטווח ארוך.">שינוי יומי</Term>
-        </div>
-        <div className="mt-3"><PriceChart data={history} /></div>
-      </Card>
+      <section className="mt-4">
+        <PortfolioChart data={history} labelHe={`מחיר ${asset.nameHe} (סימולציה)`} />
+        <div className="text-xs muted mt-1">{quote ? `${quote.asOf} · ${market.sourceLabel}` : "נתוני סימולציה חסרים"}</div>
+      </section>
 
       <div className="grid md:grid-cols-2 gap-3 mt-4">
         <Card>

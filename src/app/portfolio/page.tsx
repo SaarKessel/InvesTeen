@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { getMarketProvider } from "@/lib/market";
@@ -50,24 +51,21 @@ export default function PortfolioPage() {
         {p.positions.length === 0 ? (
           <EmptyState title="אין פוזיציות עדיין" body="בקר בעמוד השווקים ובצע רכישת תרגול ראשונה בכסף וירטואלי." actionHref="/markets" actionLabel="לשווקים" />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-slate-400 text-right">
-                <tr><th className="py-2">נכס</th><th>כמות</th><th><Term explain="המחיר הממוצע ששולם ליחידה בכל הרכישות. הבסיס לחישוב רווח או הפסד.">עלות ממוצעת</Term></th><th>מחיר נוכחי</th><th>שווי</th><th>לא ממומש</th></tr>
-              </thead>
-              <tbody>
-                {p.positions.map((pos) => (
-                  <tr key={pos.symbol} className="border-t border-navy-800 text-center">
-                    <td className="py-2 text-right">{pos.nameHe}</td>
-                    <td>{pos.qty}</td>
-                    <td>{formatVT(pos.avgCostMinor)}</td>
-                    <td>{pos.currentPriceMinor !== null ? formatVT(pos.currentPriceMinor) : "לא זמין"}</td>
-                    <td>{pos.marketValueMinor !== null ? formatVT(pos.marketValueMinor) : "לא זמין"}</td>
-                    <td>{pos.unrealizedPnlMinor !== null ? <Pnl minor={pos.unrealizedPnlMinor} /> : "לא זמין"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="divide-y divide-navy-800">
+            {p.positions.map((pos) => (
+              <Link key={pos.symbol} href={`/markets/${pos.symbol}`} className="flex items-center justify-between gap-3 py-3.5 group">
+                <div className="min-w-0">
+                  <div className="font-medium truncate group-hover:text-accent-500 transition-colors">{pos.nameHe}</div>
+                  <div className="text-xs muted mt-0.5">
+                    {pos.qty} יח׳ · <Term explain="המחיר הממוצע ששולם ליחידה בכל הרכישות. הבסיס לחישוב רווח או הפסד.">עלות ממוצעת</Term> <span dir="ltr">{formatVT(pos.avgCostMinor)}</span>
+                  </div>
+                </div>
+                <div className="text-left shrink-0">
+                  <div className="font-bold tabular-nums" dir="ltr">{pos.marketValueMinor !== null ? formatVT(pos.marketValueMinor) : "לא זמין"}</div>
+                  <div className="text-xs mt-0.5">{pos.unrealizedPnlMinor !== null ? <Pnl minor={pos.unrealizedPnlMinor} /> : <span className="muted">לא זמין</span>}</div>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </Card>
